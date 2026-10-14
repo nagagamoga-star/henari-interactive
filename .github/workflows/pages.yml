@@ -58,6 +58,12 @@ jobs:
           VITE_BASE: /${{ github.event.repository.name }}/calm-bubbles/
         run: npm run build:calm
 
+      - name: Build Ready Plan
+        working-directory: source/wildlife
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/ready-plan/
+        run: npm run build:ready
+
       - name: Test and build the profile builder
         working-directory: source/profile
         env:
@@ -73,6 +79,7 @@ jobs:
           WILDLIFE_DIST: source/wildlife/apps/wildlife-memory/dist
           PROFILE_DIST: source/profile/dist
           CALM_DIST: source/wildlife/apps/calm-bubbles/dist
+          READY_DIST: source/wildlife/apps/ready-plan/dist
           PAGES_REPOSITORY_NAME: ${{ github.event.repository.name }}
         run: node assemble.mjs
 
