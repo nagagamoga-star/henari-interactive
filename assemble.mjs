@@ -7,10 +7,11 @@ const wildlifeDist = process.env.WILDLIFE_DIST;
 const profileDist = process.env.PROFILE_DIST;
 const calmDist = process.env.CALM_DIST;
 const readyDist = process.env.READY_DIST;
+const linesDist = process.env.LINES_DIST;
 const repoName = process.env.PAGES_REPOSITORY_NAME ?? 'henari-interactive';
 
-if (!siteDir || !wildlifeDist || !profileDist || !calmDist || !readyDist) {
-  console.error('SITE_DIR, WILDLIFE_DIST, PROFILE_DIST, CALM_DIST and READY_DIST are required.');
+if (!siteDir || !wildlifeDist || !profileDist || !calmDist || !readyDist || !linesDist) {
+  console.error('SITE_DIR, WILDLIFE_DIST, PROFILE_DIST, CALM_DIST, READY_DIST and LINES_DIST are required.');
   process.exit(1);
 }
 
@@ -19,10 +20,12 @@ await mkdir(join(siteDir, 'wildlife-memory'), { recursive: true });
 await mkdir(join(siteDir, 'profile-builder'), { recursive: true });
 await mkdir(join(siteDir, 'calm-bubbles'), { recursive: true });
 await mkdir(join(siteDir, 'ready-plan'), { recursive: true });
+await mkdir(join(siteDir, 'line-puzzles'), { recursive: true });
 await cp(wildlifeDist, join(siteDir, 'wildlife-memory'), { recursive: true });
 await cp(profileDist, join(siteDir, 'profile-builder'), { recursive: true });
 await cp(calmDist, join(siteDir, 'calm-bubbles'), { recursive: true });
 await cp(readyDist, join(siteDir, 'ready-plan'), { recursive: true });
+await cp(linesDist, join(siteDir, 'line-puzzles'), { recursive: true });
 await writeFile(join(siteDir, '.nojekyll'), '');
 await writeFile(
   join(siteDir, 'index.html'),
@@ -47,6 +50,7 @@ await writeFile(
         <li><a href="profile-builder/">How I Like to Be Supported</a></li>
         <li><a href="calm-bubbles/">Calm Bubbles</a></li>
         <li><a href="ready-plan/">Ready Plan</a></li>
+        <li><a href="line-puzzles/">Line Puzzles</a></li>
       </ul>
     </main>
   </body>
