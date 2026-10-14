@@ -40,7 +40,7 @@ export async function verifySite(siteDir, repoName) {
     if (name.endsWith('.map')) errors.push(`source map published: ${name}`);
   }
 
-  for (const app of ['wildlife-memory', 'profile-builder']) {
+  for (const app of ['wildlife-memory', 'profile-builder', 'calm-bubbles']) {
     const indexPath = join(siteDir, app, 'index.html');
     let html;
     try {
