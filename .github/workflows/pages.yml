@@ -1,0 +1,86 @@
+name: Deploy Henari Interactive
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [pages-deploy]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the pages repository
+        uses: actions/checkout@v4
+
+      - name: Check out the wildlife game
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.WILDLIFE_REPOSITORY || 'nagagamoga-star/henari-interactive-source' }}
+          ref: ${{ vars.WILDLIFE_REF || 'master' }}
+          ssh-key: ${{ secrets.WILDLIFE_DEPLOY_KEY }}
+          persist-credentials: false
+          path: source/wildlife
+
+      - name: Check out the profile builder
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.PROFILE_REPOSITORY || 'nagagamoga-star/henari-everyday-tools-source' }}
+          ref: ${{ vars.PROFILE_REF || 'main' }}
+          ssh-key: ${{ secrets.PROFILE_DEPLOY_KEY }}
+          persist-credentials: false
+          path: source/profile
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Test and build the wildlife game
+        working-directory: source/wildlife
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/wildlife-memory/
+        run: |
+          npm ci
+          npm test
+          npm run build
+
+      - name: Test and build the profile builder
+        working-directory: source/profile
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/profile-builder/
+        run: |
+          npm ci
+          npm test
+          npm run build
+
+      - name: Assemble and verify the site
+        env:
+          SITE_DIR: site
+          WILDLIFE_DIST: source/wildlife/apps/wildlife-memory/dist
+          PROFILE_DIST: source/profile/dist
+          PAGES_REPOSITORY_NAME: ${{ github.event.repository.name }}
+        run: node assemble.mjs
+
+      - name: Upload the Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
