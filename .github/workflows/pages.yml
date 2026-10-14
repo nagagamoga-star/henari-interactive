@@ -52,6 +52,12 @@ jobs:
           npm test
           npm run build
 
+      - name: Build Calm Bubbles
+        working-directory: source/wildlife
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/calm-bubbles/
+        run: npm run build:calm
+
       - name: Test and build the profile builder
         working-directory: source/profile
         env:
@@ -66,6 +72,7 @@ jobs:
           SITE_DIR: site
           WILDLIFE_DIST: source/wildlife/apps/wildlife-memory/dist
           PROFILE_DIST: source/profile/dist
+          CALM_DIST: source/wildlife/apps/calm-bubbles/dist
           PAGES_REPOSITORY_NAME: ${{ github.event.repository.name }}
         run: node assemble.mjs
 
