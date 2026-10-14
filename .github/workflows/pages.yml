@@ -64,6 +64,12 @@ jobs:
           VITE_BASE: /${{ github.event.repository.name }}/ready-plan/
         run: npm run build:ready
 
+      - name: Build Line Puzzles
+        working-directory: source/wildlife
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/line-puzzles/
+        run: npm run build:lines
+
       - name: Test and build the profile builder
         working-directory: source/profile
         env:
@@ -80,6 +86,7 @@ jobs:
           PROFILE_DIST: source/profile/dist
           CALM_DIST: source/wildlife/apps/calm-bubbles/dist
           READY_DIST: source/wildlife/apps/ready-plan/dist
+          LINES_DIST: source/wildlife/apps/line-puzzles/dist
           PAGES_REPOSITORY_NAME: ${{ github.event.repository.name }}
         run: node assemble.mjs
 
