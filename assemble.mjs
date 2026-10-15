@@ -1,6 +1,6 @@
 import { spawnSync } from 'node:child_process';
 import { access, cp, mkdir, rm, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { verifySite } from './verify-site.mjs';
 
 const siteDir = process.env.SITE_DIR;
@@ -80,8 +80,10 @@ async function pathExists(path) {
 async function readyPlanDirectDir(distPath) {
   const override = process.env.READY_PLAN_DIRECT?.trim();
   if (override) return override;
-  // READY_DIST is source/wildlife/apps/ready-plan/dist, so three levels up is the source checkout.
-  const sourceRoot = join(distPath, '..', '..', '..');
+  // READY_DIST is source/wildlife/apps/ready-plan/dist, so three levels up is the
+  // source checkout. Resolve it: a relative vite.js path is looked up again from
+  // cwd and becomes source/wildlife/source/wildlife/node_modules/vite/bin/vite.js.
+  const sourceRoot = resolve(distPath, '..', '..', '..');
   const config = join(sourceRoot, 'apps', 'ready-plan', 'vite.direct.config.ts');
   if (!(await pathExists(config))) return null;
   const vite = join(sourceRoot, 'node_modules', 'vite', 'bin', 'vite.js');
