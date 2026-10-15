@@ -40,7 +40,7 @@ export async function verifySite(siteDir, repoName) {
     if (name.endsWith('.map')) errors.push(`source map published: ${name}`);
   }
 
-  for (const app of ['wildlife-memory', 'profile-builder', 'calm-bubbles', 'ready-plan', 'line-puzzles']) {
+  for (const app of ['wildlife-memory', 'profile-builder', 'calm-bubbles', 'ready-plan', 'line-puzzles', 'my-week']) {
     const indexPath = join(siteDir, app, 'index.html');
     let html;
     try {
@@ -75,6 +75,25 @@ export async function verifySite(siteDir, repoName) {
       const js = await readFile(directJs, 'utf8');
       if (!css.includes('#henari-ready-plan')) errors.push(`${directCssName} is missing #henari-ready-plan`);
       if (!js.includes('henari-ready-plan')) errors.push(`${directJsName} is missing henari-ready-plan`);
+    }
+  }
+
+  const weekCssName = 'my-week/henari-my-week.css';
+  const weekJsName = 'my-week/henari-my-week.js';
+  const weekCss = files.find((file) => rel(file) === weekCssName);
+  const weekJs = files.find((file) => rel(file) === weekJsName);
+  if (weekCss || weekJs) {
+    if (!weekCss || !weekJs) {
+      errors.push('my-week direct embed must include both henari-my-week.css and henari-my-week.js');
+    } else {
+      const cssSize = (await stat(weekCss)).size;
+      const jsSize = (await stat(weekJs)).size;
+      if (cssSize <= 1000) errors.push(`${weekCssName} must be larger than 1000 bytes`);
+      if (jsSize <= 1000) errors.push(`${weekJsName} must be larger than 1000 bytes`);
+      const css = await readFile(weekCss, 'utf8');
+      const js = await readFile(weekJs, 'utf8');
+      if (!css.includes('#henari-my-week')) errors.push(`${weekCssName} is missing #henari-my-week`);
+      if (!js.includes('henari-my-week')) errors.push(`${weekJsName} is missing henari-my-week`);
     }
   }
 

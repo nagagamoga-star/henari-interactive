@@ -9,10 +9,11 @@ const profileDist = process.env.PROFILE_DIST;
 const calmDist = process.env.CALM_DIST;
 const readyDist = process.env.READY_DIST;
 const linesDist = process.env.LINES_DIST;
+const weekDist = process.env.MY_WEEK_DIST;
 const repoName = process.env.PAGES_REPOSITORY_NAME ?? 'henari-interactive';
 
-if (!siteDir || !wildlifeDist || !profileDist || !calmDist || !readyDist || !linesDist) {
-  console.error('SITE_DIR, WILDLIFE_DIST, PROFILE_DIST, CALM_DIST, READY_DIST and LINES_DIST are required.');
+if (!siteDir || !wildlifeDist || !profileDist || !calmDist || !readyDist || !linesDist || !weekDist) {
+  console.error('SITE_DIR, WILDLIFE_DIST, PROFILE_DIST, CALM_DIST, READY_DIST, LINES_DIST and MY_WEEK_DIST are required.');
   process.exit(1);
 }
 
@@ -22,12 +23,15 @@ await mkdir(join(siteDir, 'profile-builder'), { recursive: true });
 await mkdir(join(siteDir, 'calm-bubbles'), { recursive: true });
 await mkdir(join(siteDir, 'ready-plan'), { recursive: true });
 await mkdir(join(siteDir, 'line-puzzles'), { recursive: true });
+await mkdir(join(siteDir, 'my-week'), { recursive: true });
 await cp(wildlifeDist, join(siteDir, 'wildlife-memory'), { recursive: true });
 await cp(profileDist, join(siteDir, 'profile-builder'), { recursive: true });
 await cp(calmDist, join(siteDir, 'calm-bubbles'), { recursive: true });
 await cp(readyDist, join(siteDir, 'ready-plan'), { recursive: true });
 await copyReadyPlanDirect(siteDir, await readyPlanDirectDir(readyDist));
 await cp(linesDist, join(siteDir, 'line-puzzles'), { recursive: true });
+await cp(weekDist, join(siteDir, 'my-week'), { recursive: true });
+await copyMyWeekDirect(siteDir, await myWeekDirectDir(weekDist));
 await writeFile(join(siteDir, '.nojekyll'), '');
 await writeFile(
   join(siteDir, 'index.html'),
@@ -53,6 +57,7 @@ await writeFile(
         <li><a href="calm-bubbles/">Calm Bubbles</a></li>
         <li><a href="ready-plan/">Ready Plan</a></li>
         <li><a href="line-puzzles/">Line Puzzles</a></li>
+        <li><a href="my-week/">My Week</a></li>
       </ul>
     </main>
   </body>
@@ -109,6 +114,41 @@ async function copyReadyPlanDirect(site, directDir) {
     }
   }
   const dest = join(site, 'ready-plan');
+  await mkdir(dest, { recursive: true });
+  for (const name of names) await cp(join(directDir, name), join(dest, name));
+}
+
+async function myWeekDirectDir(distPath) {
+  const override = process.env.MY_WEEK_DIRECT?.trim();
+  if (override) return override;
+  // MY_WEEK_DIST is source/wildlife/apps/my-week/dist, so three levels up is the
+  // source checkout. Resolve it so vite.js is not looked up again from that cwd.
+  const sourceRoot = resolve(distPath, '..', '..', '..');
+  const config = join(sourceRoot, 'apps', 'my-week', 'vite.direct.config.ts');
+  if (!(await pathExists(config))) return null;
+  const vite = join(sourceRoot, 'node_modules', 'vite', 'bin', 'vite.js');
+  const result = spawnSync(process.execPath, [vite, 'build', '--config', config], {
+    cwd: sourceRoot,
+    stdio: 'inherit',
+    env: process.env,
+  });
+  if ((result.status ?? 1) !== 0) {
+    console.error('The My Week direct embed build failed.');
+    process.exit(result.status ?? 1);
+  }
+  return join(sourceRoot, 'apps', 'my-week', 'dist-direct');
+}
+
+async function copyMyWeekDirect(site, directDir) {
+  if (!directDir) return;
+  const names = ['henari-my-week.css', 'henari-my-week.js'];
+  for (const name of names) {
+    if (!(await pathExists(join(directDir, name)))) {
+      console.error(`My Week direct embed is missing ${name} in ${directDir}`);
+      process.exit(1);
+    }
+  }
+  const dest = join(site, 'my-week');
   await mkdir(dest, { recursive: true });
   for (const name of names) await cp(join(directDir, name), join(dest, name));
 }
