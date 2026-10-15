@@ -59,6 +59,25 @@ export async function verifySite(siteDir, repoName) {
     }
   }
 
+  const directCssName = 'ready-plan/henari-ready-plan.css';
+  const directJsName = 'ready-plan/henari-ready-plan.js';
+  const directCss = files.find((file) => rel(file) === directCssName);
+  const directJs = files.find((file) => rel(file) === directJsName);
+  if (directCss || directJs) {
+    if (!directCss || !directJs) {
+      errors.push('ready-plan direct embed must include both henari-ready-plan.css and henari-ready-plan.js');
+    } else {
+      const cssSize = (await stat(directCss)).size;
+      const jsSize = (await stat(directJs)).size;
+      if (cssSize <= 1000) errors.push(`${directCssName} must be larger than 1000 bytes`);
+      if (jsSize <= 1000) errors.push(`${directJsName} must be larger than 1000 bytes`);
+      const css = await readFile(directCss, 'utf8');
+      const js = await readFile(directJs, 'utf8');
+      if (!css.includes('#henari-ready-plan')) errors.push(`${directCssName} is missing #henari-ready-plan`);
+      if (!js.includes('henari-ready-plan')) errors.push(`${directJsName} is missing henari-ready-plan`);
+    }
+  }
+
   const profileJs = files.filter((file) => rel(file).startsWith('profile-builder/') && file.endsWith('.js'));
   const profileSource = (await Promise.all(profileJs.map((file) => readFile(file, 'utf8')))).join('\n');
   if (profileJs.length > 0 && !/fictional example/i.test(profileSource)) {

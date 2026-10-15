@@ -1,4 +1,5 @@
-import { cp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
+import { access, cp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { verifySite } from './verify-site.mjs';
 
@@ -25,6 +26,7 @@ await cp(wildlifeDist, join(siteDir, 'wildlife-memory'), { recursive: true });
 await cp(profileDist, join(siteDir, 'profile-builder'), { recursive: true });
 await cp(calmDist, join(siteDir, 'calm-bubbles'), { recursive: true });
 await cp(readyDist, join(siteDir, 'ready-plan'), { recursive: true });
+await copyReadyPlanDirect(siteDir, await readyPlanDirectDir(readyDist));
 await cp(linesDist, join(siteDir, 'line-puzzles'), { recursive: true });
 await writeFile(join(siteDir, '.nojekyll'), '');
 await writeFile(
@@ -65,3 +67,46 @@ if (errors.length > 0) {
   process.exit(1);
 }
 console.log(`Assembled ${siteDir}`);
+
+async function pathExists(path) {
+  try {
+    await access(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function readyPlanDirectDir(distPath) {
+  const override = process.env.READY_PLAN_DIRECT?.trim();
+  if (override) return override;
+  // READY_DIST is source/wildlife/apps/ready-plan/dist, so three levels up is the source checkout.
+  const sourceRoot = join(distPath, '..', '..', '..');
+  const config = join(sourceRoot, 'apps', 'ready-plan', 'vite.direct.config.ts');
+  if (!(await pathExists(config))) return null;
+  const vite = join(sourceRoot, 'node_modules', 'vite', 'bin', 'vite.js');
+  const result = spawnSync(process.execPath, [vite, 'build', '--config', config], {
+    cwd: sourceRoot,
+    stdio: 'inherit',
+    env: process.env,
+  });
+  if ((result.status ?? 1) !== 0) {
+    console.error('The Ready Plan direct embed build failed.');
+    process.exit(result.status ?? 1);
+  }
+  return join(sourceRoot, 'apps', 'ready-plan', 'dist-direct');
+}
+
+async function copyReadyPlanDirect(site, directDir) {
+  if (!directDir) return;
+  const names = ['henari-ready-plan.css', 'henari-ready-plan.js'];
+  for (const name of names) {
+    if (!(await pathExists(join(directDir, name)))) {
+      console.error(`Ready Plan direct embed is missing ${name} in ${directDir}`);
+      process.exit(1);
+    }
+  }
+  const dest = join(site, 'ready-plan');
+  await mkdir(dest, { recursive: true });
+  for (const name of names) await cp(join(directDir, name), join(dest, name));
+}
