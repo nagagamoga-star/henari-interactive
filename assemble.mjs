@@ -10,10 +10,11 @@ const calmDist = process.env.CALM_DIST;
 const readyDist = process.env.READY_DIST;
 const linesDist = process.env.LINES_DIST;
 const weekDist = process.env.MY_WEEK_DIST;
+const crosswordDist = process.env.CROSSWORD_DIST;
 const repoName = process.env.PAGES_REPOSITORY_NAME ?? 'henari-interactive';
 
-if (!siteDir || !wildlifeDist || !profileDist || !calmDist || !readyDist || !linesDist || !weekDist) {
-  console.error('SITE_DIR, WILDLIFE_DIST, PROFILE_DIST, CALM_DIST, READY_DIST, LINES_DIST and MY_WEEK_DIST are required.');
+if (!siteDir || !wildlifeDist || !profileDist || !calmDist || !readyDist || !linesDist || !weekDist || !crosswordDist) {
+  console.error('SITE_DIR, WILDLIFE_DIST, PROFILE_DIST, CALM_DIST, READY_DIST, LINES_DIST, MY_WEEK_DIST and CROSSWORD_DIST are required.');
   process.exit(1);
 }
 
@@ -24,6 +25,7 @@ await mkdir(join(siteDir, 'calm-bubbles'), { recursive: true });
 await mkdir(join(siteDir, 'ready-plan'), { recursive: true });
 await mkdir(join(siteDir, 'line-puzzles'), { recursive: true });
 await mkdir(join(siteDir, 'my-week'), { recursive: true });
+await mkdir(join(siteDir, 'crossword'), { recursive: true });
 await cp(wildlifeDist, join(siteDir, 'wildlife-memory'), { recursive: true });
 await cp(profileDist, join(siteDir, 'profile-builder'), { recursive: true });
 await cp(calmDist, join(siteDir, 'calm-bubbles'), { recursive: true });
@@ -32,6 +34,7 @@ await copyReadyPlanDirect(siteDir, await readyPlanDirectDir(readyDist));
 await cp(linesDist, join(siteDir, 'line-puzzles'), { recursive: true });
 await cp(weekDist, join(siteDir, 'my-week'), { recursive: true });
 await copyMyWeekDirect(siteDir, await myWeekDirectDir(weekDist));
+await cp(crosswordDist, join(siteDir, 'crossword'), { recursive: true });
 await writeFile(join(siteDir, '.nojekyll'), '');
 await writeFile(
   join(siteDir, 'index.html'),
@@ -58,6 +61,7 @@ await writeFile(
         <li><a href="ready-plan/">Ready Plan</a></li>
         <li><a href="line-puzzles/">Line Puzzles</a></li>
         <li><a href="my-week/">My Week</a></li>
+        <li><a href="crossword/">Crossword</a></li>
       </ul>
     </main>
   </body>

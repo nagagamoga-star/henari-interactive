@@ -76,6 +76,12 @@ jobs:
           VITE_BASE: /${{ github.event.repository.name }}/my-week/
         run: npm run build:week
 
+      - name: Build Crossword
+        working-directory: source/wildlife
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/crossword/
+        run: npm run build:crossword
+
       - name: Test and build the profile builder
         working-directory: source/profile
         env:
@@ -94,6 +100,7 @@ jobs:
           READY_DIST: source/wildlife/apps/ready-plan/dist
           LINES_DIST: source/wildlife/apps/line-puzzles/dist
           MY_WEEK_DIST: source/wildlife/apps/my-week/dist
+          CROSSWORD_DIST: source/wildlife/apps/crossword/dist
           PAGES_REPOSITORY_NAME: ${{ github.event.repository.name }}
         run: node assemble.mjs
 
