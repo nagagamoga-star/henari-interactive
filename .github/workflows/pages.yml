@@ -1,9 +1,9 @@
 name: Deploy Henari Interactive
 
+# Manual only: a person runs this from the Actions tab. No push, merge or
+# dispatch from another repository can start a deploy.
 on:
   workflow_dispatch:
-  repository_dispatch:
-    types: [pages-deploy]
 
 permissions:
   contents: read
