@@ -62,7 +62,7 @@ export async function verifySite(siteDir, repoName) {
   // Explore North Queensland is a multi-page app. Every page must load its
   // assets from /<repo>/explore-nq/ and the fonts must be self-hosted.
   const explorePrefix = `/${repoName}/explore-nq/`;
-  for (const page of ['', 'birds/', 'garden/', 'waterways-wildlife/', 'places/']) {
+  for (const page of ['', 'birds/', 'birds/count/', 'garden/', 'waterways-wildlife/', 'places/']) {
     const name = `explore-nq/${page}index.html`;
     let html;
     try {
@@ -79,6 +79,13 @@ export async function verifySite(siteDir, repoName) {
       else if (!ref.startsWith(explorePrefix)) errors.push(`${name} asset is outside ${explorePrefix}: ${ref}`);
     }
     if (!/<main\b/.test(html) || !/<h1>/.test(html)) errors.push(`${name} is missing its pre-rendered content`);
+  }
+  for (const name of ['explore-nq/sw.js', 'explore-nq/manifest.webmanifest', 'explore-nq/offline.html', 'explore-nq/sitemap.xml']) {
+    if (!files.some((file) => rel(file) === name)) errors.push(`missing ${name}`);
+  }
+  const exploreWorker = files.find((file) => rel(file) === 'explore-nq/sw.js');
+  if (exploreWorker && !(await readFile(exploreWorker, 'utf8')).includes('const NEVER_CACHE = ["waterways-wildlife/"]')) {
+    errors.push('explore-nq/sw.js must never cache waterways-wildlife/');
   }
   const exploreFonts = files.some((file) => rel(file).startsWith('explore-nq/') && /\.woff2?$/.test(file));
   if (!exploreFonts) errors.push('explore-nq is missing self-hosted font files');
