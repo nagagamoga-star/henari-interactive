@@ -1,9 +1,9 @@
 name: Deploy Henari Interactive
 
+# Manual only: a person runs this from the Actions tab. No push, merge or
+# dispatch from another repository can start a deploy.
 on:
   workflow_dispatch:
-  repository_dispatch:
-    types: [pages-deploy]
 
 permissions:
   contents: read
@@ -82,6 +82,12 @@ jobs:
           VITE_BASE: /${{ github.event.repository.name }}/crossword/
         run: npm run build:crossword
 
+      - name: Build Explore North Queensland
+        working-directory: source/wildlife
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/explore-nq/
+        run: npm run build:explore
+
       - name: Test and build the profile builder
         working-directory: source/profile
         env:
@@ -101,6 +107,7 @@ jobs:
           LINES_DIST: source/wildlife/apps/line-puzzles/dist
           MY_WEEK_DIST: source/wildlife/apps/my-week/dist
           CROSSWORD_DIST: source/wildlife/apps/crossword/dist
+          EXPLORE_DIST: source/wildlife/apps/explore-nq/dist
           PAGES_REPOSITORY_NAME: ${{ github.event.repository.name }}
         run: node assemble.mjs
 

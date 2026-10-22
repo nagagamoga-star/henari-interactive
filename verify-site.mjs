@@ -59,6 +59,30 @@ export async function verifySite(siteDir, repoName) {
     }
   }
 
+  // Explore North Queensland is a multi-page app. Every page must load its
+  // assets from /<repo>/explore-nq/ and the fonts must be self-hosted.
+  const explorePrefix = `/${repoName}/explore-nq/`;
+  for (const page of ['', 'birds/', 'garden/', 'waterways-wildlife/', 'places/']) {
+    const name = `explore-nq/${page}index.html`;
+    let html;
+    try {
+      html = await readFile(join(siteDir, name), 'utf8');
+    } catch {
+      errors.push(`missing ${name}`);
+      continue;
+    }
+    const refs = [...html.matchAll(/\b(?:src|href)="([^"]+)"/g)].map((match) => match[1]);
+    const assets = refs.filter((ref) => /\.(?:js|css)(?:\?|$)/.test(ref));
+    if (assets.length === 0) errors.push(`${name} has no JS or CSS reference`);
+    for (const ref of assets) {
+      if (/^https?:\/\//i.test(ref)) errors.push(`${name} loads an external asset: ${ref}`);
+      else if (!ref.startsWith(explorePrefix)) errors.push(`${name} asset is outside ${explorePrefix}: ${ref}`);
+    }
+    if (!/<main\b/.test(html) || !/<h1>/.test(html)) errors.push(`${name} is missing its pre-rendered content`);
+  }
+  const exploreFonts = files.some((file) => rel(file).startsWith('explore-nq/') && /\.woff2?$/.test(file));
+  if (!exploreFonts) errors.push('explore-nq is missing self-hosted font files');
+
   const directCssName = 'ready-plan/henari-ready-plan.css';
   const directJsName = 'ready-plan/henari-ready-plan.js';
   const directCss = files.find((file) => rel(file) === directCssName);
