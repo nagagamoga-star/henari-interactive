@@ -87,6 +87,17 @@ export async function verifySite(siteDir, repoName) {
   if (exploreWorker && !(await readFile(exploreWorker, 'utf8')).includes('const NEVER_CACHE = ["waterways-wildlife/"]')) {
     errors.push('explore-nq/sw.js must never cache waterways-wildlife/');
   }
+  if (exploreWorker) {
+    // Every precached file must exist and be non-empty, or the worker never installs.
+    const source = await readFile(exploreWorker, 'utf8');
+    const listed = [...source.matchAll(/^const (?:ASSETS|PAGES) = (\[.*\]);$/gm)].flatMap((match) => JSON.parse(match[1]));
+    for (const path of [...listed, 'offline.html']) {
+      const name = `explore-nq/${path === './' ? '' : path}${path.endsWith('/') || path === './' ? 'index.html' : ''}`.replace('/./', '/');
+      const file = files.find((candidate) => rel(candidate) === name);
+      if (!file) errors.push(`explore-nq/sw.js precaches a missing file: ${path}`);
+      else if ((await stat(file)).size === 0) errors.push(`explore-nq/sw.js precaches an empty file: ${path}`);
+    }
+  }
   const exploreFonts = files.some((file) => rel(file).startsWith('explore-nq/') && /\.woff2?$/.test(file));
   if (!exploreFonts) errors.push('explore-nq is missing self-hosted font files');
 
