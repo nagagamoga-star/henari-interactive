@@ -9,3 +9,4 @@ Copy these files to the root of a new public repository named `henari-interactiv
 <!-- publish check -->
 <!-- Explore follow-along UI -->
 <!-- Keep official condition links in flow -->
+<!-- Explore homepage release source 2a531a66fd5bf1b8d90dfd8b8e3eb6f92f9683bb -->
