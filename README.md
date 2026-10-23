@@ -7,3 +7,4 @@ GitHub Actions checks out the two private source repositories with read-only dep
 Copy these files to the root of a new public repository named `henari-interactive`. Setup, secrets, and the Squarespace snippets are documented in the private wildlife repository at `docs/GITHUB-PAGES-DEPLOYMENT.md`.
 
 <!-- publish check -->
+<!-- Explore follow-along UI -->
