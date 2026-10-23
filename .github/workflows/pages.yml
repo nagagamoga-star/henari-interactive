@@ -1,8 +1,9 @@
 name: Deploy Henari Interactive
 
-# Manual only: a person runs this from the Actions tab. No push, merge or
-# dispatch from another repository can start a deploy.
+# Deploy when the public assembly repo changes, and keep a manual option.
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
