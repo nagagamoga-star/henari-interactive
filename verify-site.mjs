@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { extname, join, relative } from 'node:path';
 
@@ -28,7 +29,7 @@ function postMessageUsesWildcard(source) {
   return calls.some((call) => /['"]\*['"]/.test(call.slice(0, 160)));
 }
 
-export async function verifySite(siteDir, repoName) {
+export async function verifySite(siteDir, repoName, guide = {}) {
   const errors = [];
   const notes = [];
   const files = await walk(siteDir);
@@ -137,6 +138,33 @@ export async function verifySite(siteDir, repoName) {
       if (!css.includes('#henari-my-week')) errors.push(`${weekCssName} is missing #henari-my-week`);
       if (!js.includes('henari-my-week')) errors.push(`${weekJsName} is missing henari-my-week`);
     }
+  }
+
+  // The Henari Guide: only versioned scripts, the snippet's file present with its pinned hash,
+  // and every release the source repository records still online and unchanged.
+  const guideFiles = files.filter((file) => rel(file).startsWith('guide/'));
+  for (const file of guideFiles) {
+    if (!/^guide\/guide\.\d+\.\d+\.\d+\.js$/.test(rel(file))) errors.push(`unexpected file in guide/: ${rel(file)}`);
+  }
+  const sri = async (name) => {
+    const file = files.find((candidate) => rel(candidate) === `guide/${name}`);
+    return file ? `sha384-${createHash('sha384').update(await readFile(file)).digest('base64')}` : undefined;
+  };
+  if (guide.snippet) {
+    const src = /src="https:\/\/[^"]+\/guide\/(guide\.\d+\.\d+\.\d+\.js)"/.exec(guide.snippet)?.[1];
+    const integrity = /integrity="([^"]+)"/.exec(guide.snippet)?.[1];
+    if (!src || !integrity) errors.push('the Henari Guide snippet has no versioned src or integrity');
+    else {
+      const actual = await sri(src);
+      if (!actual) errors.push(`the Henari Guide snippet loads guide/${src}, which is not in the site`);
+      else if (actual !== integrity) errors.push(`guide/${src} hashes to ${actual}, but the snippet pins ${integrity}`);
+      else notes.push(`Henari Guide: guide/${src} matches the snippet (${integrity}).`);
+    }
+  }
+  for (const [name, integrity] of Object.entries(guide.releases ?? {})) {
+    const actual = await sri(name);
+    if (!actual) errors.push(`released guide/${name} is missing. Add it to this repository's guide/ folder.`);
+    else if (actual !== integrity) errors.push(`released guide/${name} changed: ${actual}, expected ${integrity}`);
   }
 
   const profileJs = files.filter((file) => rel(file).startsWith('profile-builder/') && file.endsWith('.js'));

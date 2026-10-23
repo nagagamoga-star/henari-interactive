@@ -89,6 +89,16 @@ jobs:
           VITE_BASE: /${{ github.event.repository.name }}/explore-nq/
         run: npm run build:explore
 
+      # The Henari Guide is one script for Squarespace, not a page. Older source revisions do not have it.
+      - name: Build the Henari Guide
+        working-directory: source/wildlife
+        run: |
+          if [ -f apps/guide/vite.config.ts ]; then
+            npm run build:guide
+          else
+            echo "This source revision has no Henari Guide."
+          fi
+
       - name: Test and build the profile builder
         working-directory: source/profile
         env:
@@ -109,6 +119,9 @@ jobs:
           MY_WEEK_DIST: source/wildlife/apps/my-week/dist
           CROSSWORD_DIST: source/wildlife/apps/crossword/dist
           EXPLORE_DIST: source/wildlife/apps/explore-nq/dist
+          GUIDE_DIST: source/wildlife/apps/guide/dist
+          GUIDE_SNIPPET: source/wildlife/deploy/squarespace-guide-staging.html
+          GUIDE_RELEASES: source/wildlife/apps/guide/releases.json
           PAGES_REPOSITORY_NAME: ${{ github.event.repository.name }}
         run: node assemble.mjs
 

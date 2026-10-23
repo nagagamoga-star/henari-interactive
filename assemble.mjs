@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { access, cp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { access, cp, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { verifySite } from './verify-site.mjs';
 
@@ -13,6 +13,9 @@ const weekDist = process.env.MY_WEEK_DIST;
 const crosswordDist = process.env.CROSSWORD_DIST;
 const exploreDist = process.env.EXPLORE_DIST;
 const repoName = process.env.PAGES_REPOSITORY_NAME ?? 'henari-interactive';
+const guideDist = process.env.GUIDE_DIST;
+const guideSnippet = process.env.GUIDE_SNIPPET;
+const guideReleases = process.env.GUIDE_RELEASES;
 
 if (!siteDir || !wildlifeDist || !profileDist || !calmDist || !readyDist || !linesDist || !weekDist || !crosswordDist || !exploreDist) {
   console.error('SITE_DIR, WILDLIFE_DIST, PROFILE_DIST, CALM_DIST, READY_DIST, LINES_DIST, MY_WEEK_DIST, CROSSWORD_DIST and EXPLORE_DIST are required.');
@@ -38,6 +41,7 @@ await cp(weekDist, join(siteDir, 'my-week'), { recursive: true });
 await copyMyWeekDirect(siteDir, await myWeekDirectDir(weekDist));
 await cp(crosswordDist, join(siteDir, 'crossword'), { recursive: true });
 await cp(exploreDist, join(siteDir, 'explore-nq'), { recursive: true });
+await copyGuide(siteDir);
 await writeFile(join(siteDir, '.nojekyll'), '');
 await writeFile(
   join(siteDir, 'index.html'),
@@ -73,7 +77,10 @@ await writeFile(
 `,
 );
 
-const { errors, notes } = await verifySite(siteDir, repoName);
+const { errors, notes } = await verifySite(siteDir, repoName, {
+  snippet: (await pathExists(guideSnippet ?? '')) ? await readFile(guideSnippet, 'utf8') : undefined,
+  releases: (await pathExists(guideReleases ?? '')) ? JSON.parse(await readFile(guideReleases, 'utf8')).published : undefined,
+});
 for (const note of notes) console.log(note);
 if (errors.length > 0) {
   for (const error of errors) console.error(error);
@@ -159,4 +166,28 @@ async function copyMyWeekDirect(site, directDir) {
   const dest = join(site, 'my-week');
   await mkdir(dest, { recursive: true });
   for (const name of names) await cp(join(directDir, name), join(dest, name));
+}
+
+/**
+ * The Henari Guide is loaded by a Squarespace snippet that pins one file by its hash, so a published
+ * file must stay online and never change. Released files are kept in this repository's guide/ folder
+ * and published every time. The fresh build is added beside them, and must match any archived file
+ * of the same name byte for byte.
+ */
+async function copyGuide(site) {
+  const archive = new URL('./guide/', import.meta.url).pathname;
+  const dest = join(site, 'guide');
+  const archived = (await pathExists(archive)) ? (await readdir(archive)).filter((name) => /^guide\.\d+\.\d+\.\d+\.js$/.test(name)) : [];
+  const built = guideDist && (await pathExists(guideDist)) ? (await readdir(guideDist)).filter((name) => /^guide\.\d+\.\d+\.\d+\.js$/.test(name)) : [];
+  if (archived.length === 0 && built.length === 0) return;
+  await mkdir(dest, { recursive: true });
+  for (const name of archived) await cp(join(archive, name), join(dest, name));
+  for (const name of built) {
+    const bytes = await readFile(join(guideDist, name));
+    if (archived.includes(name) && !bytes.equals(await readFile(join(archive, name)))) {
+      console.error(`guide/${name} is already released with different bytes. Bump GUIDE_VERSION in the source repository.`);
+      process.exit(1);
+    }
+    await writeFile(join(dest, name), bytes);
+  }
 }
