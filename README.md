@@ -8,3 +8,4 @@ Copy these files to the root of a new public repository named `henari-interactiv
 
 <!-- publish check -->
 <!-- Explore follow-along UI -->
+<!-- Keep official forecast source in flow -->
