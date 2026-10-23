@@ -5,3 +5,5 @@ This folder is the complete contents of the public GitHub Pages repository. It h
 GitHub Actions checks out the two private source repositories with read-only deploy keys, runs their unit tests, builds them, and publishes only the `site/` artifact. The live site is rebuilt on updates to this assembly repository and can also be run manually. The Explore source is rebuilt from the master branch and plant photos are attributed, checked, described and served from Wikimedia Commons on the Garden page. The Explore waterways page includes the merged Townsville fishing guide.
 
 Copy these files to the root of a new public repository named `henari-interactive`. Setup, secrets, and the Squarespace snippets are documented in the private wildlife repository at `docs/GITHUB-PAGES-DEPLOYMENT.md`.
+
+<!-- publish check -->
