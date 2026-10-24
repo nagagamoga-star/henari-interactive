@@ -69,7 +69,7 @@ await writeFile(
         <li><a href="line-puzzles/">Line Puzzles</a></li>
         <li><a href="my-week/">My Week</a></li>
         <li><a href="crossword/">Crossword</a></li>
-        <li><a href="explore-nq/">Explore North Queensland</a></li>
+        <li><a href="explore-nq/">Discover Your Community</a></li>
       </ul>
     </main>
   </body>

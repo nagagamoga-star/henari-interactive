@@ -19,3 +19,5 @@ Copy these files to the root of a new public repository named `henari-interactiv
 <!-- Garden layout planner clarity release source b76f83bfa54476da094aa5e47042302c1b2b5235 -->
 <!-- Garden layout accessibility wording release source 26bb2ddbc51fb0a10449fdf4f13d3fc580f3958d -->
 <!-- Discover Your Community release source 80faf3d95c8ae07238153c68a6c08ccbc0237f27 -->
+
+<!-- Community guide cohesion release source a91deff15f84275d2f4dfe19df77cf46cc99f316 -->
