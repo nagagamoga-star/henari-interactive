@@ -21,3 +21,5 @@ Copy these files to the root of a new public repository named `henari-interactiv
 <!-- Discover Your Community release source 80faf3d95c8ae07238153c68a6c08ccbc0237f27 -->
 
 <!-- Community guide cohesion release source a91deff15f84275d2f4dfe19df77cf46cc99f316 -->
+
+<!-- Gardening companion release source 3237423c82a6600958924546e1714fe6bb872684 (PR #46) -->
