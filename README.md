@@ -17,3 +17,4 @@ Copy these files to the root of a new public repository named `henari-interactiv
 
 <!-- Garden permaculture photo release source 4601b7e7421f0f3b03ecfa50100d40a7f3a30f61 -->
 <!-- Garden layout planner clarity release source b76f83bfa54476da094aa5e47042302c1b2b5235 -->
+<!-- Garden layout accessibility wording release source 26bb2ddbc51fb0a10449fdf4f13d3fc580f3958d -->
