@@ -79,7 +79,7 @@ export async function verifySite(siteDir, repoName, guide = {}) {
       if (/^https?:\/\//i.test(ref)) errors.push(`${name} loads an external asset: ${ref}`);
       else if (!ref.startsWith(explorePrefix)) errors.push(`${name} asset is outside ${explorePrefix}: ${ref}`);
     }
-    if (!/<main\b/.test(html) || !/<h1>/.test(html)) errors.push(`${name} is missing its pre-rendered content`);
+    if (!/<main\b/.test(html) || !/<h1\b/.test(html)) errors.push(`${name} is missing its pre-rendered content`);
   }
   for (const name of ['explore-nq/sw.js', 'explore-nq/manifest.webmanifest', 'explore-nq/offline.html', 'explore-nq/sitemap.xml']) {
     if (!files.some((file) => rel(file) === name)) errors.push(`missing ${name}`);
