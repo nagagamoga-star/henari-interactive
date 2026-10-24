@@ -14,3 +14,4 @@ Copy these files to the root of a new public repository named `henari-interactiv
 <!-- Explore homepage release source 2a531a66fd5bf1b8d90dfd8b8e3eb6f92f9683bb -->
 <!-- Garden mockup release source 4b068457edb73d913ef98f995fb73bcc7b0b3120 -->
 <!-- Garden permaculture planner release source f947cbb74d3e9374d050aabff3583abeba26758c -->
+<!-- Garden UX disclosure release source 80471fa89d94e6064dea64d59b11110deda0002d -->
