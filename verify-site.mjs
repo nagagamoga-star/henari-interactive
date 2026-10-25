@@ -63,7 +63,8 @@ export async function verifySite(siteDir, repoName, guide = {}) {
   // Explore North Queensland is a multi-page app. Every page must load its
   // assets from /<repo>/explore-nq/ and the fonts must be self-hosted.
   const explorePrefix = `/${repoName}/explore-nq/`;
-  for (const page of ['', 'birds/', 'birds/count/', 'garden/', 'waterways-wildlife/', 'places/']) {
+  const fishingPages = files.some((file) => rel(file) === 'explore-nq/fishing/index.html') ? ['fishing/', 'fishing/my-catch/'] : [];
+  for (const page of ['', 'birds/', 'birds/count/', 'garden/', 'waterways-wildlife/', ...fishingPages, 'places/']) {
     const name = `explore-nq/${page}index.html`;
     let html;
     try {
@@ -85,8 +86,11 @@ export async function verifySite(siteDir, repoName, guide = {}) {
     if (!files.some((file) => rel(file) === name)) errors.push(`missing ${name}`);
   }
   const exploreWorker = files.find((file) => rel(file) === 'explore-nq/sw.js');
-  if (exploreWorker && !(await readFile(exploreWorker, 'utf8')).includes('const NEVER_CACHE = ["waterways-wildlife/"]')) {
-    errors.push('explore-nq/sw.js must never cache waterways-wildlife/');
+  if (exploreWorker) {
+    // Rules and safety advice are never kept offline: the waterways page always, and the fishing guide once it exists.
+    const neverCache = JSON.parse(/^const NEVER_CACHE = (\[.*\]);$/m.exec(await readFile(exploreWorker, 'utf8'))?.[1] ?? '[]');
+    const mustSkip = ['waterways-wildlife/', ...(files.some((file) => rel(file) === 'explore-nq/fishing/index.html') ? ['fishing/'] : [])];
+    for (const page of mustSkip) if (!neverCache.includes(page)) errors.push(`explore-nq/sw.js must never cache ${page}`);
   }
   if (exploreWorker) {
     // Every precached file must exist and be non-empty, or the worker never installs.
