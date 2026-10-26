@@ -27,3 +27,5 @@ Copy these files to the root of a new public repository named `henari-interactiv
 <!-- Gardening companion release source 3237423c82a6600958924546e1714fe6bb872684 (PR #46) -->
 
 <!-- SEO deployment refresh 2026-10-26 -->
+
+<!-- SEO deployment refresh 2026-10-26b -->
