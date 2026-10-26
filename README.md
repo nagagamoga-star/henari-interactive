@@ -46,3 +46,5 @@ Copy these files to the root of a new public repository named `henari-interactiv
 <!-- Move Centacare NQ to Groups and Social Activities 2026-10-26 -->
 
 <!-- Add swipeable image rails across Explore pages 2026-10-26 -->
+
+<!-- Repair Birds and Explore image card rails 2026-10-26 -->
