@@ -60,3 +60,6 @@ Copy these files to the root of a new public repository named `henari-interactiv
 
 
 <!-- Source register cleanup validation 2026-10-27 -->
+
+
+<!-- Release Guide 0.4.2 after Explore Today update 2026-10-27 -->
