@@ -38,3 +38,5 @@ Copy these files to the root of a new public repository named `henari-interactiv
 <!-- Allow Commons church image in Explore test suite 2026-10-26 -->
 
 <!-- Correct Commons image URL test patterns 2026-10-26 -->
+
+<!-- Add Townsville museums arts street art and Town Common cards 2026-10-26 -->
