@@ -25,3 +25,5 @@ Copy these files to the root of a new public repository named `henari-interactiv
 <!-- Free Places de-duplication release source 7e811f2153dc4abb2ccd1b19bd03692c933bbae9 -->
 
 <!-- Gardening companion release source 3237423c82a6600958924546e1714fe6bb872684 (PR #46) -->
+
+<!-- SEO deployment refresh 2026-10-26 -->
