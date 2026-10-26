@@ -75,3 +75,5 @@ Copy these files to the root of a new public repository named `henari-interactiv
 <!-- Retry publish with valid CDTLI WebP assets 2026-10-27 -->
 
 <!-- Final publish after restoring archived Guide 0.4.1 2026-10-27 -->
+
+<!-- Fix Explore Today card expansion 2026-10-27 -->
