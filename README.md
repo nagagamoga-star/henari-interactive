@@ -51,3 +51,6 @@ Copy these files to the root of a new public repository named `henari-interactiv
 
 
 <!-- Expand Explore Today parks activities and community groups 2026-10-27 -->
+
+
+<!-- Retry Explore Today build after source validation fixes 2026-10-27 -->
