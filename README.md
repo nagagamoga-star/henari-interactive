@@ -54,3 +54,6 @@ Copy these files to the root of a new public repository named `henari-interactiv
 
 
 <!-- Retry Explore Today build after source validation fixes 2026-10-27 -->
+
+
+<!-- Final Explore Today validation run 2026-10-27 -->
