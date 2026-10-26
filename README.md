@@ -29,3 +29,5 @@ Copy these files to the root of a new public repository named `henari-interactiv
 <!-- SEO deployment refresh 2026-10-26 -->
 
 <!-- SEO deployment refresh 2026-10-26b -->
+
+<!-- imagery refresh 2026-10-26 -->
