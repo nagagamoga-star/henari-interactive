@@ -44,6 +44,50 @@ await cp(exploreDist, join(siteDir, 'explore-nq'), { recursive: true });
 await copyGuide(siteDir);
 await writeFile(join(siteDir, '.nojekyll'), '');
 await writeFile(
+  join(siteDir, 'robots.txt'),
+  `User-agent: *
+Allow: /
+Sitemap: https://nagagamoga-star.github.io/henari-interactive/sitemap.xml
+`,
+);
+await writeFile(
+  join(siteDir, 'sitemap.xml'),
+  `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://nagagamoga-star.github.io/henari-interactive/</loc></url>
+  <url><loc>https://nagagamoga-star.github.io/henari-interactive/explore-nq/</loc></url>
+  <url><loc>https://nagagamoga-star.github.io/henari-interactive/explore-nq/birds/</loc></url>
+  <url><loc>https://nagagamoga-star.github.io/henari-interactive/explore-nq/birds/count/</loc></url>
+  <url><loc>https://nagagamoga-star.github.io/henari-interactive/explore-nq/garden/</loc></url>
+  <url><loc>https://nagagamoga-star.github.io/henari-interactive/explore-nq/waterways-wildlife/</loc></url>
+  <url><loc>https://nagagamoga-star.github.io/henari-interactive/explore-nq/fishing/</loc></url>
+  <url><loc>https://nagagamoga-star.github.io/henari-interactive/explore-nq/fishing/my-catch/</loc></url>
+  <url><loc>https://nagagamoga-star.github.io/henari-interactive/explore-nq/places/</loc></url>
+</urlset>
+`,
+);
+await writeFile(
+  join(siteDir, 'llms.txt'),
+  `# Henari Support Services
+
+> Person-centred disability support and accessible everyday tools for people in Townsville and North Queensland.
+
+## Discover Your Community
+
+- [Explore Today](https://nagagamoga-star.github.io/henari-interactive/explore-nq/): Townsville activities, markets, parks, community groups, churches, food support and social events. Confirm current details with official sources.
+- [Birds of Townsville](https://nagagamoga-star.github.io/henari-interactive/explore-nq/birds/): Common Townsville birds, where to look, and the Aussie Bird Count.
+- [Garden in the Dry Tropics](https://nagagamoga-star.github.io/henari-interactive/explore-nq/garden/): Month-by-month Townsville wet- and dry-season gardening.
+- [Waterways and wildlife](https://nagagamoga-star.github.io/henari-interactive/explore-nq/waterways-wildlife/): Crocodile safety, local wildlife, invasive species, mud crab and fishing rules.
+- [Free and community places](https://nagagamoga-star.github.io/henari-interactive/explore-nq/places/): Free parks, paths, libraries, galleries, nature spots and community groups.
+- [Fishing in Townsville](https://nagagamoga-star.github.io/henari-interactive/explore-nq/fishing/): Local fish, fishing places, basics, official Queensland rules and My Catch.
+- [Townsville weather and tides](https://www.henarisupport.com/townsville-weather): Forecast, warnings, tides and moon information for planning local outings.
+
+## Source and freshness
+
+The Explore routes are static guides. Weather and tide information is linked to official services and the Henari Townsville weather page; this file does not claim live or real-time data. Confirm conditions, warnings, rules, opening hours and access details before travelling.
+`,
+);
+await writeFile(
   join(siteDir, 'index.html'),
   `<!DOCTYPE html>
 <html lang="en">
