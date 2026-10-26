@@ -48,3 +48,6 @@ Copy these files to the root of a new public repository named `henari-interactiv
 <!-- Add swipeable image rails across Explore pages 2026-10-26 -->
 
 <!-- Repair Birds and Explore image card rails 2026-10-26 -->
+
+
+<!-- Expand Explore Today parks activities and community groups 2026-10-27 -->
