@@ -44,3 +44,5 @@ Copy these files to the root of a new public repository named `henari-interactiv
 <!-- Add Townsville museums arts street art and Town Common additions 2026-10-26 -->
 
 <!-- Move Centacare NQ to Groups and Social Activities 2026-10-26 -->
+
+<!-- Add swipeable image rails across Explore pages 2026-10-26 -->
