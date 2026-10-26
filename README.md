@@ -69,3 +69,5 @@ Copy these files to the root of a new public repository named `henari-interactiv
 
 
 <!-- Retry Birds and responsive CDTLI photo validation 2026-10-27 -->
+
+<!-- Publish expanded Town Common birding information after photo registry fix 2026-10-27 -->
