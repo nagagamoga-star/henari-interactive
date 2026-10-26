@@ -34,3 +34,5 @@ Copy these files to the root of a new public repository named `henari-interactiv
 
 
 <!-- Holy Trinity church imagery refresh 2026-10-26 -->
+
+<!-- Allow Commons church image in Explore test suite 2026-10-26 -->
